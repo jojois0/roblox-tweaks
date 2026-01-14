@@ -1,0 +1,132 @@
+@echo off
+title MICROACE - Premium Input Optimization Suite
+chcp 65001 >nul
+color 0C
+mode 150,40
+
+:: ==================================================
+:: CREATE RESTORE POINT
+:: ==================================================
+powershell -command "Checkpoint-Computer -Description 'LIFENZ Input Optimization Restore Point' -RestorePointType 'MODIFY_SETTINGS'" >nul 2>&1
+
+:: ==================================================
+:menu
+cls
+echo.
+echo.               M I C R O A C E   I N P U T   S U I T E
+echo.
+echo.                        YouTube: jojois0    
+echo.
+echo.   ------------------------------------------------------------
+echo.
+echo.        [1] Mouse Optimization (No Acceleration)
+echo.        [2] Keyboard Optimization (No Delay)
+echo.        [3] USB & HID No Power Saving
+echo.        [4] Input Latency & Responsiveness
+echo.        [5] APPLY FULL MICROACE INPUT OPTIMIZATION
+echo.
+echo.        [0] Exit
+echo.
+echo.   ------------------------------------------------------------
+set /p c=               Select:
+
+if "%c%"=="1" goto mouse_info
+if "%c%"=="2" goto keyboard_info
+if "%c%"=="3" goto usb_info
+if "%c%"=="4" goto latency_info
+if "%c%"=="5" goto all
+if "%c%"=="0" exit
+goto menu
+
+:: ==================================================
+:confirm
+echo.
+echo.        [A] Apply
+echo.        [B] Back
+set /p x=               Choose:
+if /I "%x%"=="A" goto apply
+if /I "%x%"=="B" goto menu
+goto confirm
+
+:: ==================================================
+:mouse_info
+cls
+echo.
+echo.        MOUSE OPTIMIZATION
+echo.
+echo.  - Disables mouse acceleration
+echo.  - Sets raw input curves
+echo.  - Improves mouse driver priority
+echo.  - Optimizes mouse data queue (SAFE)
+goto confirm
+:apply
+reg add "HKCU\Control Panel\Mouse" /v MouseSpeed /t REG_SZ /d 0 /f >nul
+reg add "HKCU\Control Panel\Mouse" /v MouseThreshold1 /t REG_SZ /d 0 /f >nul
+reg add "HKCU\Control Panel\Mouse" /v MouseThreshold2 /t REG_SZ /d 0 /f >nul
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters" /v ThreadPriority /t REG_DWORD /d 31 /f >nul
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters" /v MouseDataQueueSize /t REG_DWORD /d 20 /f >nul
+goto done
+
+:: ==================================================
+:keyboard_info
+cls
+echo.
+echo.        KEYBOARD OPTIMIZATION
+echo.
+echo.  - Disables Sticky / Filter / Toggle Keys
+echo.  - Maximum repeat rate
+echo.  - Improves keyboard driver priority
+goto confirm
+:apply
+reg add "HKCU\Control Panel\Accessibility\StickyKeys" /v Flags /t REG_SZ /d 0 /f >nul
+reg add "HKCU\Control Panel\Accessibility\Keyboard Response" /v Flags /t REG_SZ /d 0 /f >nul
+reg add "HKCU\Control Panel\Keyboard" /v KeyboardDelay /t REG_SZ /d 0 /f >nul
+reg add "HKCU\Control Panel\Keyboard" /v KeyboardSpeed /t REG_SZ /d 31 /f >nul
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\kbdclass\Parameters" /v ThreadPriority /t REG_DWORD /d 31 /f >nul
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\kbdclass\Parameters" /v KeyboardDataQueueSize /t REG_DWORD /d 20 /f >nul
+goto done
+
+:: ==================================================
+:usb_info
+cls
+echo.
+echo.        USB & HID POWER SAVING DISABLE
+echo.
+echo.  - Prevents USB sleep
+echo.  - Improves mouse & keyboard stability
+echo.  - Reduces random input delay
+goto confirm
+:apply
+powercfg -setacvalueindex SCHEME_CURRENT SUB_USB USBSELECTIVESETTING 0 >nul
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\USB" /v DisableSelectiveSuspend /t REG_DWORD /d 1 /f >nul
+goto done
+
+:: ==================================================
+:latency_info
+cls
+echo.
+echo.        INPUT LATENCY & RESPONSIVENESS
+echo.
+echo.  - Faster UI response
+echo.  - Better foreground input priority
+echo.  - Reduced system input lag
+goto confirm
+:apply
+reg add "HKCU\Control Panel\Desktop" /v MenuShowDelay /t REG_SZ /d 0 /f >nul
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" /v SystemResponsiveness /t REG_DWORD /d 0 /f >nul
+goto done
+
+:: ==================================================
+:all
+call :mouse_info
+call :keyboard_info
+call :usb_info
+call :latency_info
+goto menu
+
+:: ==================================================
+:done
+echo.
+echo.        OPTIMIZATION APPLIED SUCCESSFULLY
+pause >nul
+goto menu
