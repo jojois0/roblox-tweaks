@@ -7,7 +7,7 @@ mode 150,40
 :: ==================================================
 :: CREATE RESTORE POINT
 :: ==================================================
-powershell -command "Checkpoint-Computer -Description 'LIFENZ Input Optimization Restore Point' -RestorePointType 'MODIFY_SETTINGS'" >nul 2>&1
+powershell -command "Checkpoint-Computer -Description 'MICROACE Input Optimization Restore Point' -RestorePointType 'MODIFY_SETTINGS'" >nul 2>&1
 
 :: ==================================================
 :menu
